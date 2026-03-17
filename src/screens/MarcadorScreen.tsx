@@ -6,14 +6,37 @@ import {
   StyleSheet,
   Image,
   ImageBackground,
+  Alert,
 } from 'react-native';
 
 export function MarcadorScreen() {
   const [pontosNos, setPontosNos] = useState(0);
   const [pontosEles, setPontosEles] = useState(0);
 
+  const [vitoriasNos, setVitoriasNos] = useState(0);
+  const [vitoriasEles, setVitoriasEles] = useState(0);
+
+  function verificarVencedor(novosPontosNos: number, novosPontosEles: number) {
+    if (novosPontosNos >= 12) {
+      setVitoriasNos(vitoriasNos + 1);
+      setPontosNos(0);
+      setPontosEles(0);
+      Alert.alert('Fim da partida', 'Nós vencemos a partida!');
+      return;
+    }
+
+    if (novosPontosEles >= 12) {
+      setVitoriasEles(vitoriasEles + 1);
+      setPontosNos(0);
+      setPontosEles(0);
+      Alert.alert('Fim da partida', 'Eles venceram a partida!');
+    }
+  }
+
   function aumentarNos() {
-    setPontosNos(pontosNos + 1);
+    const novoValor = pontosNos + 1;
+    setPontosNos(novoValor);
+    verificarVencedor(novoValor, pontosEles);
   }
 
   function diminuirNos() {
@@ -23,7 +46,9 @@ export function MarcadorScreen() {
   }
 
   function aumentarEles() {
-    setPontosEles(pontosEles + 1);
+    const novoValor = pontosEles + 1;
+    setPontosEles(novoValor);
+    verificarVencedor(pontosNos, novoValor);
   }
 
   function diminuirEles() {
@@ -33,11 +58,15 @@ export function MarcadorScreen() {
   }
 
   function apostarNos(valor: number) {
-    setPontosNos(pontosNos + valor);
+    const novoValor = pontosNos + valor;
+    setPontosNos(novoValor);
+    verificarVencedor(novoValor, pontosEles);
   }
 
   function apostarEles(valor: number) {
-    setPontosEles(pontosEles + valor);
+    const novoValor = pontosEles + valor;
+    setPontosEles(novoValor);
+    verificarVencedor(pontosNos, novoValor);
   }
 
   return (
@@ -47,20 +76,19 @@ export function MarcadorScreen() {
       resizeMode="cover"
     >
       <View style={styles.container}>
-        {/* LOGO */}
         <Image
           source={require('../../assets/logo.png')}
           style={styles.logo}
         />
 
-        {/* TÍTULO */}
         <Text style={styles.titulo}>Marcador de Truco</Text>
+        <Text style={styles.subtitulo}>Pontos para vencer: 12</Text>
 
         <View style={styles.timesContainer}>
-          {/* NÓS */}
           <View style={styles.timeBox}>
             <Text style={styles.nomeTime}>Nós</Text>
             <Text style={styles.valor}>{pontosNos}</Text>
+            <Text style={styles.vitorias}>Vitórias: {vitoriasNos}</Text>
 
             <View style={styles.botoesContainer}>
               <TouchableOpacity style={styles.botaoMais} onPress={aumentarNos}>
@@ -101,10 +129,10 @@ export function MarcadorScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* ELES */}
           <View style={styles.timeBox}>
             <Text style={styles.nomeTime}>Eles</Text>
             <Text style={styles.valor}>{pontosEles}</Text>
+            <Text style={styles.vitorias}>Vitórias: {vitoriasEles}</Text>
 
             <View style={styles.botoesContainer}>
               <TouchableOpacity style={styles.botaoMais} onPress={aumentarEles}>
@@ -169,13 +197,18 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 30,
+    marginBottom: 8,
+    color: '#ffffff',
+  },
+  subtitulo: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 25,
     color: '#ffffff',
   },
   timesContainer: {
     flexDirection: 'row',
     width: '100%',
-  
   },
   timeBox: {
     flex: 1,
@@ -185,13 +218,19 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 10,
-     color: '#ffffff',
+    color: '#ffffff',
   },
   valor: {
     fontSize: 48,
     fontWeight: 'bold',
-    marginBottom: 20,
-     color: '#ffffff',
+    marginBottom: 8,
+    color: '#ffffff',
+  },
+  vitorias: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    color: '#ffffff',
   },
   botoesContainer: {
     flexDirection: 'row',
@@ -216,7 +255,7 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   textoBotao: {
-    color: '#ffffff',
+    color: '#fff',
     fontSize: 24,
     fontWeight: 'bold',
   },
